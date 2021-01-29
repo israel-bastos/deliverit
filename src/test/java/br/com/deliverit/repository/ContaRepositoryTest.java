@@ -27,7 +27,7 @@ class ContaRepositoryTest {
 	private Conta create() {
 		var created = Conta.builder()
 				.numeroDaConta("01")
-        		.nomeDaConta("Conta de Luz")
+        		.nomeDaConta("Fatura do cartão")
         		.valorDaConta(new BigDecimal(100.0))
         		.dataVencimento(LocalDate.now().plusDays(30))
         		.dataPagamento(LocalDate.now())

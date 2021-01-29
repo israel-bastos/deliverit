@@ -33,7 +33,7 @@ class ContaControllerTest {
         PageImpl<Conta> contaPage = new PageImpl<>(List.of(
         		Conta.builder()
 				.numeroDaConta("01")
-        		.nomeDaConta("Conta de Luz")
+        		.nomeDaConta("Conta de Internet")
         		.valorDaConta(new BigDecimal(100.0))
         		.dataVencimento(LocalDate.now().plusDays(30))
         		.dataPagamento(LocalDate.now())

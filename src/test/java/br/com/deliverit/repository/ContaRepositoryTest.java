@@ -5,12 +5,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import br.com.deliverit.model.Conta;
 
@@ -38,6 +42,41 @@ class ContaRepositoryTest {
 		
 		Assertions.assertNotNull(created);
 		Assertions.assertNotNull(created.getId());
+		Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> this.repository.save(null));
+	}
+	
+	@Test
+	void saveWithNullNomeDaContaTest() {
+		var created = Conta.builder()
+				.numeroDaConta("01")
+        		.nomeDaConta(null)
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build();
+		
+		ConstraintViolationException exception = Assertions.assertThrows(
+				ConstraintViolationException.class,
+		           () -> this.repository.save(created));
+
+		Assertions.assertTrue(exception.getConstraintViolations().toString().contains("Campo nome da conta é obrigatório."));
+	}
+	
+	@Test
+	void saveWithEmptyNumeroDaContaTest() {
+		var created = Conta.builder()
+				.numeroDaConta("")
+        		.nomeDaConta("Conta de Internet")
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build();
+		
+		ConstraintViolationException thrown = Assertions.assertThrows(
+				ConstraintViolationException.class,
+		           () -> this.repository.save(created));
+
+		Assertions.assertTrue(thrown.getConstraintViolations().toString().contains("Campo número da conta é obrigatório."));
 	}
 	
 	@Test
@@ -62,6 +101,7 @@ class ContaRepositoryTest {
 		
 		var deleted = this.repository.findById(created.getId());
 		Assertions.assertTrue(deleted.isEmpty());
+		Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> this.repository.delete(null));
 	}
 	
 	@Test
@@ -70,6 +110,15 @@ class ContaRepositoryTest {
 		var finded = this.repository.findById(created.getId());
 		
 		Assertions.assertNotNull(finded);
+		Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> this.repository.findById(null));
+	}
+	
+	@Test
+	void findByIdUnknownTest() {
+		long idUnknown = 1234L;
+		Optional<Conta> unknown = this.repository.findById(idUnknown);
+		
+		Assertions.assertTrue(unknown.isEmpty());
 	}
 	
 	@Test
@@ -81,7 +130,7 @@ class ContaRepositoryTest {
 			createdList.add(created);
 		}
 		
-		Assertions.assertEquals(3, createdList.size());
+		Assertions.assertEquals(createdList.size(), this.repository.findAll().size());
 	}
 	
 	@Test
@@ -108,6 +157,4 @@ class ContaRepositoryTest {
 		Assertions.assertNotNull(finded);
 		Assertions.assertEquals(createdList.get(0).getNumeroDaConta(), finded.iterator().next());
 	}
-	
-	// Se quiser amanhã incluir testes para gerar erros
 }

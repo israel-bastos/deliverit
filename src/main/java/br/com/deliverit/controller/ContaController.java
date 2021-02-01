@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +22,10 @@ import br.com.deliverit.model.Conta;
 import br.com.deliverit.service.ContaService;
 
 @RestController
-@RequestMapping(path = "api/v1/contas")
+@RequestMapping(path = "/api/v1/contas")
 public class ContaController {
 	
-	private ContaService contaService;
+	private final ContaService contaService;
 	
 	public ContaController(ContaService contaService) {
 		this.contaService = contaService;

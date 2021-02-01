@@ -1,4 +1,4 @@
-package br.com.deliverit.controller;
+package br.com.deliverit.wrapper;
 
 import java.util.List;
 

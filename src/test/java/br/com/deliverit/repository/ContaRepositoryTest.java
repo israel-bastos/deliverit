@@ -2,7 +2,6 @@ package br.com.deliverit.repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -82,16 +81,15 @@ class ContaRepositoryTest {
 	@Test
 	void updateTest() {
 		var created = create();
-		var whenCreated = LocalDateTime.now();
+		String tempNomeDaConta = created.getNomeDaConta();
 		
 		created.setNomeDaConta("Conta de internet");
 		
-		var saved = this.repository.save(created);
-		var whenUpdated = LocalDateTime.now();
+		var updated = this.repository.save(created);
 		
-		Assertions.assertEquals(saved.getId(), saved.getId());
-		Assertions.assertEquals(created.getNomeDaConta(), saved.getNomeDaConta());
-		Assertions.assertNotEquals(whenCreated, whenUpdated);
+		Assertions.assertNotNull(updated.getId());
+		Assertions.assertEquals(created.getId(), updated.getId());
+		Assertions.assertNotEquals(tempNomeDaConta, updated.getNomeDaConta());
 	}
 	
 	@Test

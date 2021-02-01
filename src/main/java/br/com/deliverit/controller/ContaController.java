@@ -36,7 +36,7 @@ public class ContaController {
 		return ResponseEntity.ok(contaService.findAllNonPageable());
 	}
 	
-	@GetMapping(path = "pageable")
+	@GetMapping(path = "/pageable")
 	public ResponseEntity<Page<Conta>> findAll(Pageable pageable){
 		return ResponseEntity.ok(contaService.findAll(pageable));
 	}
@@ -59,14 +59,14 @@ public class ContaController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<String> update(@RequestBody Conta conta){
+	public ResponseEntity<Void> update(@RequestBody Conta conta){
 		contaService.update(conta);
 		
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(path = "/{id}")
-	public ResponseEntity<String> delete(@PathVariable long id){
+	public ResponseEntity<Void> delete(@PathVariable long id){
 		contaService.delete(id);
 		
 		return ResponseEntity.noContent().build();

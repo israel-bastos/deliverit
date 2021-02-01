@@ -114,6 +114,11 @@ class ContaRepositoryTest {
 	}
 	
 	@Test
+	void findByIdWithNullIdTest() {
+		Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> this.repository.findById(null));
+	}
+	
+	@Test
 	void findByIdUnknownTest() {
 		long idUnknown = 1234L;
 		Optional<Conta> unknown = this.repository.findById(idUnknown);

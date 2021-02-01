@@ -30,15 +30,11 @@ public class ContaService {
 	
 	public Conta findById(long id) {
 		return contaRepository.findById(id)
-				.orElseThrow(() -> new NotFoundException("Conta não encontrada"));
+				.orElseThrow(() -> new NotFoundException("Conta não encontrada."));
 	}
 	
 	public List<Conta> findByNumeroDaConta(String numeroDaConta) {
 		List<Conta> listaDeContas = contaRepository.findByNumeroDaConta(numeroDaConta);
-		
-		if (listaDeContas.isEmpty()) {
-			throw new NotFoundException("Conta não encontrada");
-		}
 		
 		return listaDeContas;
 	}

@@ -11,5 +11,5 @@ import br.com.deliverit.model.Conta;
 public interface ContaRepository extends JpaRepository<Conta, Long> {
 	
 	List<Conta> findByNumeroDaConta(String numeroDaConta);
-
+	
 }

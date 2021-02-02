@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.deliverit.domain.Conta;
 import br.com.deliverit.handler.exception.NotFoundException;
-import br.com.deliverit.model.Conta;
 import br.com.deliverit.repository.ContaRepository;
 
 @Service
@@ -33,8 +33,8 @@ public class ContaService {
 				.orElseThrow(() -> new NotFoundException("Conta não encontrada."));
 	}
 	
-	public List<Conta> findByNumeroDaConta(String numeroDaConta) {
-		List<Conta> listaDeContas = contaRepository.findByNumeroDaConta(numeroDaConta);
+	public List<Conta> findByNomeDaConta(String nomeDaConta) {
+		List<Conta> listaDeContas = contaRepository.findByNomeDaConta(nomeDaConta);
 		
 		return listaDeContas;
 	}
@@ -54,9 +54,9 @@ public class ContaService {
 
 		Conta saved = Conta.builder()
 				.id(save.getId())
-				.numeroDaConta(conta.getNumeroDaConta())
         		.nomeDaConta(conta.getNomeDaConta())
-        		.valorDaConta(conta.getValorDaConta())
+        		.valorDaContaOriginal(conta.getValorDaContaOriginal())
+        		.valorDaContaCorrigido(conta.getValorDaContaCorrigido())
         		.dataVencimento(conta.getDataVencimento())
         		.dataPagamento(conta.getDataPagamento())
         		.build();

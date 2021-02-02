@@ -1,4 +1,4 @@
-package br.com.deliverit.model;
+package br.com.deliverit.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,14 +26,14 @@ public class Conta {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotEmpty(message = "Campo número da conta é obrigatório.")
-	private String numeroDaConta;
-	
 	@NotEmpty(message = "Campo nome da conta é obrigatório.")
 	private String nomeDaConta;
 	
-	@NotNull(message = "Campo valor da conta é obrigatório.")
-	private BigDecimal valorDaConta;
+	@NotNull(message = "Campo valor da conta original é obrigatório.")
+	private BigDecimal valorDaContaOriginal;
+	
+	@NotNull(message = "Campo valor da conta corrigido é obrigatório.")
+	private BigDecimal valorDaContaCorrigido;
 	
 	@NotNull(message = "Campo data de vencimento é obrigatório.")
 	private LocalDate dataVencimento;
@@ -41,4 +41,15 @@ public class Conta {
 	@NotNull(message = "Campo data de pagamento é obrigatório.")
 	private LocalDate dataPagamento;
 	
+	@Data
+	@Entity
+	class DadosDeRegra {
+		
+		@Id
+		private long id;
+		
+		private int quantidadeDeDiasEmAtraso;
+		private String regraAplicada;
+		
+	}
 }

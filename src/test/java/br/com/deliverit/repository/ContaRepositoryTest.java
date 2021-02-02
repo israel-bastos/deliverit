@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-import br.com.deliverit.model.Conta;
+import br.com.deliverit.domain.Conta;
 
 @DataJpaTest
 class ContaRepositoryTest {
@@ -25,12 +25,12 @@ class ContaRepositoryTest {
 	
 	private Conta create() {
 		var created = Conta.builder()
-				.numeroDaConta("01")
-        		.nomeDaConta("Fatura do cartão")
-        		.valorDaConta(new BigDecimal(100.0))
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
         		.dataVencimento(LocalDate.now().plusDays(30))
         		.dataPagamento(LocalDate.now())
-        		.build();
+				.build();
 		
 		return this.repository.save(created);
 	}
@@ -47,12 +47,12 @@ class ContaRepositoryTest {
 	@Test
 	void saveWithNullNomeDaContaTest() {
 		var created = Conta.builder()
-				.numeroDaConta("01")
-        		.nomeDaConta(null)
-        		.valorDaConta(new BigDecimal(100.0))
+				.nomeDaConta(null)
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
         		.dataVencimento(LocalDate.now().plusDays(30))
         		.dataPagamento(LocalDate.now())
-        		.build();
+				.build();
 		
 		ConstraintViolationException exception = Assertions.assertThrows(
 				ConstraintViolationException.class,
@@ -62,20 +62,20 @@ class ContaRepositoryTest {
 	}
 	
 	@Test
-	void saveWithEmptyNumeroDaContaTest() {
+	void saveWithEmptyNomeDaContaTest() {
 		var created = Conta.builder()
-				.numeroDaConta("")
-        		.nomeDaConta("Conta de Internet")
-        		.valorDaConta(new BigDecimal(100.0))
+				.nomeDaConta("")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
         		.dataVencimento(LocalDate.now().plusDays(30))
         		.dataPagamento(LocalDate.now())
-        		.build();
+				.build();
 		
 		ConstraintViolationException thrown = Assertions.assertThrows(
 				ConstraintViolationException.class,
 		           () -> this.repository.save(created));
 
-		Assertions.assertTrue(thrown.getConstraintViolations().toString().contains("Campo número da conta é obrigatório."));
+		Assertions.assertTrue(thrown.getConstraintViolations().toString().contains("Campo nome da conta é obrigatório."));
 	}
 	
 	@Test
@@ -142,22 +142,22 @@ class ContaRepositoryTest {
 		
 		for (int i = 0; i < 3; i++) {
 			var created = Conta.builder()
-					.numeroDaConta(String.valueOf(i))
-	        		.nomeDaConta("Conta de Luz")
-	        		.valorDaConta(new BigDecimal(100.0))
+					.nomeDaConta("Conta de Internet")
+					.valorDaContaOriginal(new BigDecimal(100.0))
+	        		.valorDaContaCorrigido(new BigDecimal(0.0))
 	        		.dataVencimento(LocalDate.now().plusDays(30))
 	        		.dataPagamento(LocalDate.now())
-	        		.build();
+					.build();
 			
 			this.repository.save(created);
 			
 			createdList.add(created);
 		}
 		
-		var finded = this.repository.findByNumeroDaConta(createdList.get(0).getNumeroDaConta()).stream()
-				.map(conta -> conta.getNumeroDaConta()).collect(Collectors.toList());
+		var finded = this.repository.findByNomeDaConta(createdList.get(0).getNomeDaConta()).stream()
+				.map(conta -> conta.getNomeDaConta()).collect(Collectors.toList());
 		
 		Assertions.assertNotNull(finded);
-		Assertions.assertEquals(createdList.get(0).getNumeroDaConta(), finded.iterator().next());
+		Assertions.assertEquals(createdList.get(0).getNomeDaConta(), finded.iterator().next());
 	}
 }

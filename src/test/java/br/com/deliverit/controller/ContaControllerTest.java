@@ -19,7 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import br.com.deliverit.model.Conta;
+import br.com.deliverit.domain.Conta;
 import br.com.deliverit.service.ContaService;
 
 @ExtendWith(SpringExtension.class)
@@ -35,46 +35,46 @@ class ContaControllerTest {
     void setUp(){
         BDDMockito.when(contaServiceMock.findAll(ArgumentMatchers.any())).thenReturn(new PageImpl<>(List.of(
         		Conta.builder()
-				.numeroDaConta("01")
         		.nomeDaConta("Conta de Internet")
-        		.valorDaConta(new BigDecimal(100.0))
+        		.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
         		.dataVencimento(LocalDate.now().plusDays(30))
         		.dataPagamento(LocalDate.now())
         		.build()
         )));
         
         BDDMockito.when(contaServiceMock.findAllNonPageable()).thenReturn(List.of(Conta.builder()
-				.numeroDaConta("01")
 				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build()));
         
         BDDMockito.when(contaServiceMock.findById(ArgumentMatchers.anyLong())).thenReturn(Conta.builder()
 				.id(1L)
-        		.numeroDaConta("01")
 				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build());
         
-        BDDMockito.when(contaServiceMock.findByNumeroDaConta(ArgumentMatchers.anyString())).thenReturn(List.of(Conta.builder()
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+        BDDMockito.when(contaServiceMock.findByNomeDaConta(ArgumentMatchers.anyString())).thenReturn(List.of(Conta.builder()
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build()));
 
         BDDMockito.when(contaServiceMock.save(ArgumentMatchers.any(Conta.class))).thenReturn(Conta.builder()
 				.id(1L)
-        		.numeroDaConta("01")
 				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build());
 
 		BDDMockito.doNothing().when(contaServiceMock).update(ArgumentMatchers.any(Conta.class));
@@ -83,22 +83,22 @@ class ContaControllerTest {
     }
     
     @Test
-    void v(){
+    void findAllWithPageableContasTest(){
 		var created = Conta.builder()
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build();
     	
-        String numeroDaConta = created.getNumeroDaConta();
+        String nomeDaConta = created.getNomeDaConta();
 
         Page<Conta> contaPage = contaController.findAll(null).getBody();
 
         Assertions.assertNotNull(contaPage);
         Assertions.assertTrue(!contaPage.isEmpty());
-        Assertions.assertTrue(contaPage.toList().get(0).getNumeroDaConta().equals(numeroDaConta));
+        Assertions.assertEquals(contaPage.toList().get(0).getNomeDaConta(), nomeDaConta);
     }
     
     @Test
@@ -114,11 +114,11 @@ class ContaControllerTest {
     void findByIdTest(){
         Long findedId = Conta.builder()
         		.id(1L)
-        		.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build().getId();
 
         Conta conta = contaController.findById(1).getBody();
@@ -129,27 +129,27 @@ class ContaControllerTest {
 
     @Test
     void findByNumeroDaContaTest(){
-        String findedNumeroDaConta = Conta.builder()
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
-				.build().getNumeroDaConta();
+        String findedNomeDaConta = Conta.builder()
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+				.build().getNomeDaConta();
 
-        List<Conta> contas = contaController.findByNumeroDaConta("conta").getBody();
+        List<Conta> contas = contaController.findByNomeDaConta("conta").getBody();
 
         Assertions.assertNotNull(contas);
         Assertions.assertTrue(!contas.isEmpty());
-        Assertions.assertEquals(contas.get(0).getNumeroDaConta(), findedNumeroDaConta);
+        Assertions.assertEquals(contas.get(0).getNomeDaConta(), findedNomeDaConta);
     }
 
     @Test
     void findByNumeroDaContaWhenNotFoundTest(){
-        BDDMockito.when(contaServiceMock.findByNumeroDaConta(ArgumentMatchers.anyString()))
+        BDDMockito.when(contaServiceMock.findByNomeDaConta(ArgumentMatchers.anyString()))
                 .thenReturn(Collections.emptyList());
 
-        List<Conta> contas = contaController.findByNumeroDaConta("03").getBody();
+        List<Conta> contas = contaController.findByNomeDaConta("Conta de celular").getBody();
 
         Assertions.assertNotEquals(null, contas);
         Assertions.assertTrue(contas.isEmpty());
@@ -159,11 +159,11 @@ class ContaControllerTest {
     void saveTest(){
         var saved = contaController.save(Conta.builder()
         		.id(1L)
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build());
         
         Conta conta = contaController.findById(1).getBody();
@@ -177,16 +177,16 @@ class ContaControllerTest {
     void updateTest(){
         var created = contaController.save(Conta.builder()
         		.id(1L)
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(new BigDecimal(0.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build());
         
         
         var findedConta = contaController.findById(created.getBody().getId()).getBody();
-        findedConta.setNumeroDaConta("02");
+        findedConta.setNomeDaConta("Conta De Cartão de Crédito");
         
         ResponseEntity<Void> updatedConta = contaController.update(findedConta);
         

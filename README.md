@@ -8,6 +8,7 @@ Procurar o arquivo docker-compose.yml e executar o comando: docker-compose up no
 
 ## Code Techniques
     . DDD
+    . TDD
     . SOLID
     . CLEAN CODE
     . API REST

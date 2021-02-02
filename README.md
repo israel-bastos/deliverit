@@ -23,7 +23,7 @@ JUnit 5
 Docker
 Postman Community
 
-## Running the API Rest tests
+## Running the API Rest tests using Postman
 	. Path: api/v1/contas
 	
 	** Definir no authorization	

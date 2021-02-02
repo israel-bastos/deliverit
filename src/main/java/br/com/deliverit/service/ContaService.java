@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.deliverit.domain.Conta;
 import br.com.deliverit.handler.exception.NotFoundException;
-import br.com.deliverit.model.Conta;
 import br.com.deliverit.repository.ContaRepository;
 
 @Service

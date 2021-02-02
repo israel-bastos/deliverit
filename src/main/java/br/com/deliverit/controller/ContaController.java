@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.deliverit.model.Conta;
+import br.com.deliverit.domain.Conta;
 import br.com.deliverit.service.ContaService;
 
 @RestController

@@ -1,4 +1,4 @@
-package br.com.deliverit.model;
+package br.com.deliverit.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
-import br.com.deliverit.model.Conta;
+import br.com.deliverit.domain.Conta;
 import br.com.deliverit.repository.ContaRepository;
 import br.com.deliverit.wrapper.PageableResponse;
 

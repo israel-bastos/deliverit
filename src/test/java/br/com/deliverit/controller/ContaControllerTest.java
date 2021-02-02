@@ -19,7 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import br.com.deliverit.model.Conta;
+import br.com.deliverit.domain.Conta;
 import br.com.deliverit.service.ContaService;
 
 @ExtendWith(SpringExtension.class)

@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-import br.com.deliverit.model.Conta;
+import br.com.deliverit.domain.Conta;
 
 @DataJpaTest
 class ContaRepositoryTest {

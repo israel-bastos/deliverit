@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -27,123 +27,152 @@ import br.com.deliverit.wrapper.PageableResponse;
 @AutoConfigureTestDatabase
 public class ContaControllerIntegrationTest {
 	@Autowired
-	private TestRestTemplate testRestTemplate;
-
+    private TestRestTemplate testRestTemplate;
+    
 	@Autowired
-	private ContaRepository contaRepository;
+    private ContaRepository contaRepository;
 
 	@LocalServerPort
-	private int port;
+    private int port;
+    
+    @Test
+    void findAllWithPageableContasTest() {
+        Conta saved = contaRepository.save(Conta.builder()
+				.numeroDaConta("01")
+        		.nomeDaConta("Conta de Internet")
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build());
 
-	@Test
-	void findAllWithPageableContasTest() {
-		Conta saved = contaRepository.save(Conta.builder().nomeDaConta("Conta de Luz")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+        String numeroDaConta = saved.getNumeroDaConta();
 
-		String nomeDaConta = saved.getNomeDaConta();
+        PageableResponse<Conta> contaPage = testRestTemplate.exchange("/api/v1/contas/pageable", HttpMethod.GET, null,
+                new ParameterizedTypeReference<PageableResponse<Conta>>() {}).getBody();
 
-		PageableResponse<Conta> contaPage = testRestTemplate.exchange("/api/v1/contas/pageable", HttpMethod.GET, null,
-				new ParameterizedTypeReference<PageableResponse<Conta>>() {
-				}).getBody();
+        Assertions.assertNotNull(contaPage);
+        Assertions.assertTrue(!contaPage.isEmpty());
+        Assertions.assertTrue(contaPage.toList().get(0).getNumeroDaConta().equals(numeroDaConta));
+    }
 
-		Assertions.assertThat(contaPage).isNotNull().isNotEmpty();
-		Assertions.assertThat(contaPage.toList().get(0).getNomeDaConta()).isEqualTo(nomeDaConta);
-	}
+    @Test
+    void findAllFullListOfContasTest() {
+    	Conta saved = contaRepository.save(Conta.builder()
+				.numeroDaConta("01")
+        		.nomeDaConta("Conta de Internet")
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build());
+    	
+        List<Conta> contas = testRestTemplate.exchange("/api/v1/contas", HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<Conta>>() {}).getBody();
 
-	@Test
-	void findAllFullListOfContasTest() {
-		Conta saved = contaRepository.save(Conta.builder().nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+        Assertions.assertEquals(saved.getNumeroDaConta(), contas.get(0).getNumeroDaConta());
+        Assertions.assertNotNull(contas);
+        Assertions.assertTrue(!contas.isEmpty());
+        Assertions.assertEquals(contas.size(), 1);
+    }
 
-		List<Conta> contas = testRestTemplate
-				.exchange("/api/v1/contas", HttpMethod.GET, null, new ParameterizedTypeReference<List<Conta>>() {
-				}).getBody();
+    @Test
+    void findByIdTest() {
+        Conta saved = contaRepository.save(Conta.builder()
+				.numeroDaConta("01")
+        		.nomeDaConta("Conta de Internet")
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build());
 
-		Assertions.assertThat(contas).isNotNull().isNotEmpty().hasSize(1);
-		Assertions.assertThat(contas.get(0).getNomeDaConta()).isEqualTo(saved.getNomeDaConta());
-	}
+        Long findedId = saved.getId();
 
-	@Test
-	void findByIdTest() {
-		Conta saved = contaRepository.save(Conta.builder().numeroDaConta("01").nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+        Conta conta = testRestTemplate.getForObject("/api/v1/contas/{id}", Conta.class, findedId);
+        
+        Assertions.assertNotNull(conta);
+        Assertions.assertEquals(conta.getId(), findedId);
+    }
 
-		Long findedId = saved.getId();
+    @Test
+    void findByNumeroDaContaTest(){
+        Conta saved = contaRepository.save(Conta.builder()
+				.numeroDaConta("01")
+        		.nomeDaConta("Conta de Internet")
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build());
 
-		Conta conta = testRestTemplate.getForObject("/api/v1/contas/{id}", Conta.class, findedId);
+        String findedNumeroDaConta = saved.getNumeroDaConta();
 
-		Assertions.assertThat(conta).isNotNull();
-		Assertions.assertThat(conta.getId()).isNotNull().isEqualTo(findedId);
-	}
+        String url = String.format("/api/v1/contas/search?numeroDaConta=%s", findedNumeroDaConta);
 
-	@Test
-	void findByNomedDaContaTest() {
-		Conta saved = contaRepository.save(Conta.builder().nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+        List<Conta> contas = testRestTemplate.exchange(url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<Conta>>() {}).getBody();
+        
+        Assertions.assertNotNull(contas);
+        Assertions.assertTrue(!contas.isEmpty());
+        Assertions.assertEquals(contas.get(0).getNumeroDaConta(), findedNumeroDaConta);
+    }
 
-		String nomeDaConta = saved.getNomeDaConta();
-		String url = String.format("/api/v1/contas/search?nomeDaConta=%s", nomeDaConta);
+    @Test
+    void findByNumeroDaContaWhenNotFoundTest(){
+        List<Conta> contas = testRestTemplate.exchange("/api/v1/contas/search?numeroDaConta=02", HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<Conta>>() {}).getBody();
+        
+        Assertions.assertNotNull(contas);
+        Assertions.assertTrue(contas.isEmpty());
 
-		List<Conta> contas = testRestTemplate
-				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Conta>>() {
-				}).getBody();
+    }
 
-		Assertions.assertThat(contas).isNotNull().isNotEmpty().hasSize(1);
-		Assertions.assertThat(contas.get(0).getNomeDaConta()).isEqualTo(nomeDaConta);
-	}
+    @Test
+    void saveTest(){
+        Conta saved = Conta.builder()
+				.numeroDaConta("01")
+        		.nomeDaConta("Conta de Internet")
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build();
 
-	@Test
-	void findByIdDaContaWhenNotFoundTest() {
-		List<Conta> contas = testRestTemplate.exchange("/api/v1/contas/search?nomeDaConta=boleto+da+faculdade",
-				HttpMethod.GET, null, new ParameterizedTypeReference<List<Conta>>() {
-				}).getBody();
+        ResponseEntity<Conta> contaResponse = testRestTemplate.postForEntity("/api/v1/contas", saved, Conta.class);
 
-		Assertions.assertThat(contas).isNotNull().isEmpty();
-	}
+        Assertions.assertNotNull(contaResponse.getBody().getId());
+        Assertions.assertEquals(contaResponse.getStatusCode(), HttpStatus.CREATED);
+    }
 
-	@Test
-	void saveTest() {
-		Conta saved = Conta.builder().nomeDaConta("Conta de Internet").valorDaContaOriginal(new BigDecimal(100.0))
-				.valorDaContaCorrigido(new BigDecimal(0.0)).dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now()).build();
+    @Test
+    void updateTest(){
+        Conta saved = contaRepository.save(Conta.builder()
+				.numeroDaConta("01")
+        		.nomeDaConta("Conta de Internet")
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build());
+        
+        saved.setNomeDaConta("02");
 
-		ResponseEntity<Conta> contaResponse = testRestTemplate.postForEntity("/api/v1/contas", saved, Conta.class);
+        ResponseEntity<Void> contaResponse = testRestTemplate.exchange("/api/v1/contas",
+                HttpMethod.PUT, new HttpEntity<>(saved), Void.class);
+        
+        Assertions.assertNotNull(saved);
+        Assertions.assertEquals(contaResponse.getStatusCode(), HttpStatus.NO_CONTENT);
+    }
 
-		Assertions.assertThat(contaResponse).isNotNull();
-		Assertions.assertThat(contaResponse.getBody()).isNotNull();
-		Assertions.assertThat(contaResponse.getBody().getId()).isNotNull();
-		Assertions.assertThat(contaResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-	}
+    @Test
+    void deleteTest(){
+        Conta saved = contaRepository.save(Conta.builder()
+				.numeroDaConta("01")
+        		.nomeDaConta("Conta de Internet")
+        		.valorDaConta(new BigDecimal(100.0))
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+        		.build());
 
-	@Test
-	void updateTest() {
-		Conta saved = contaRepository.save(Conta.builder().numeroDaConta("01").nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
-
-		saved.setNomeDaConta("Conta de Celular");
-
-		ResponseEntity<Void> contaResponse = testRestTemplate.exchange("/api/v1/contas", HttpMethod.PUT,
-				new HttpEntity<>(saved), Void.class);
-
-		Assertions.assertThat(contaResponse).isNotNull();
-		Assertions.assertThat(contaResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-	}
-
-	@Test
-	void deleteTest() {
-		Conta saved = contaRepository.save(Conta.builder().numeroDaConta("01").nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
-
-		ResponseEntity<Void> contaResponse = testRestTemplate.exchange("/api/v1/contas/{id}", HttpMethod.DELETE, null,
-				Void.class, saved.getId());
-
-		Assertions.assertThat(contaResponse).isNotNull();
-		Assertions.assertThat(contaResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-	}
+        ResponseEntity<Void> contaResponse = testRestTemplate.exchange("/api/v1/contas/{id}",
+                HttpMethod.DELETE,null, Void.class, saved.getId());
+        
+        Assertions.assertNotNull(saved);
+        Assertions.assertEquals(contaResponse.getStatusCode(), HttpStatus.NO_CONTENT);
+    }
 }

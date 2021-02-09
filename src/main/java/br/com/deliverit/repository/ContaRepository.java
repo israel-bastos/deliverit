@@ -10,6 +10,5 @@ import br.com.deliverit.domain.Conta;
 @Repository
 public interface ContaRepository extends JpaRepository<Conta, Long> {
 	
-	List<Conta> findByNumeroDaConta(String numeroDaConta);
-	
+	List<Conta> findByNomeDaConta(String NomeDaConta);
 }

@@ -33,8 +33,8 @@ public class ContaService {
 				.orElseThrow(() -> new NotFoundException("Conta não encontrada."));
 	}
 	
-	public List<Conta> findByNumeroDaConta(String numeroDaConta) {
-		List<Conta> listaDeContas = contaRepository.findByNumeroDaConta(numeroDaConta);
+	public List<Conta> findByNomeDaConta(String nomeDaConta) {
+		List<Conta> listaDeContas = contaRepository.findByNomeDaConta(nomeDaConta);
 		
 		return listaDeContas;
 	}
@@ -54,9 +54,9 @@ public class ContaService {
 
 		Conta saved = Conta.builder()
 				.id(save.getId())
-				.numeroDaConta(conta.getNumeroDaConta())
         		.nomeDaConta(conta.getNomeDaConta())
-        		.valorDaConta(conta.getValorDaConta())
+        		.valorDaContaOriginal(conta.getValorDaContaOriginal())
+        		.valorDaContaCorrigido(conta.getValorDaContaCorrigido())
         		.dataVencimento(conta.getDataVencimento())
         		.dataPagamento(conta.getDataPagamento())
         		.build();

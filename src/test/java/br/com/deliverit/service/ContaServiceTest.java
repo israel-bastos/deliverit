@@ -37,9 +37,9 @@ public class ContaServiceTest {
         BDDMockito.when(contaRepositoryMock.findAll(ArgumentMatchers.any(PageRequest.class)))
         .thenReturn(new PageImpl<>(List.of(
         		Conta.builder()
-				.numeroDaConta("01")
         		.nomeDaConta("Conta de Internet")
-        		.valorDaConta(new BigDecimal(100.0))
+        		.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
         		.dataVencimento(LocalDate.now().plusDays(30))
         		.dataPagamento(LocalDate.now())
         		.build()
@@ -47,40 +47,40 @@ public class ContaServiceTest {
         
 		BDDMockito.when(contaRepositoryMock.findAll())
 		.thenReturn(List.of(Conta.builder()
-				.numeroDaConta("01")
 				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build()));
         
         BDDMockito.when(contaRepositoryMock.findById(ArgumentMatchers.anyLong()))
         .thenReturn(Optional.of(Conta.builder()
 				.id(1L)
-        		.numeroDaConta("01")
 				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build()));
         
-        BDDMockito.when(contaRepositoryMock.findByNumeroDaConta(ArgumentMatchers.anyString()))
+        BDDMockito.when(contaRepositoryMock.findByNomeDaConta(ArgumentMatchers.anyString()))
         .thenReturn(List.of(Conta.builder()
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build()));
 
         BDDMockito.when(contaRepositoryMock.save(ArgumentMatchers.any(Conta.class)))
         .thenReturn(Conta.builder()
 				.id(1L)
-        		.numeroDaConta("01")
 				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build());
 
 		BDDMockito.doNothing().when(contaRepositoryMock).delete(ArgumentMatchers.any(Conta.class));
@@ -88,48 +88,48 @@ public class ContaServiceTest {
     
     @Test
     void findAllWithPageableContasTest(){
-		var created = Conta.builder()
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+    	var created = Conta.builder()
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build();
     	
-        String numeroDaConta = created.getNumeroDaConta();
+        String nomeDaConta = created.getNomeDaConta();
 
         Page<Conta> contaPage = contaService.findAll(PageRequest.of(1, 1));
 
         Assertions.assertTrue(!contaPage.isEmpty() || contaPage != null );
-        Assertions.assertTrue(contaPage.toList().get(0).getNumeroDaConta().equals(numeroDaConta));
+        Assertions.assertEquals(contaPage.toList().get(0).getNomeDaConta(), nomeDaConta);
     }
     
     @Test
     void findAllFullListOfContasTest(){
-		var created = Conta.builder()
-				.numeroDaConta("01")
+    	var created = Conta.builder()
 				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build();
     	
-		String numeroDaConta = created.getNumeroDaConta();
+		String nomeDaConta = created.getNomeDaConta();
         List<Conta> contas = contaService.findAllNonPageable();
 		
         Assertions.assertTrue(!contas.isEmpty() || contas != null);
-        Assertions.assertTrue(contas.get(0).getNumeroDaConta().equals(numeroDaConta));
+        Assertions.assertEquals(contas.get(0).getNomeDaConta(), nomeDaConta);
     }
     
     @Test
     void findByIdTest(){
         Long findedId = Conta.builder()
         		.id(1L)
-        		.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build().getId();
 
         Conta conta = contaService.findById(1);
@@ -148,27 +148,27 @@ public class ContaServiceTest {
 
     @Test
     void findByNumeroDaContaTest(){
-        String findedNumeroDaConta = Conta.builder()
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
-				.build().getNumeroDaConta();
+        String findedNomeDaConta = Conta.builder()
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
+				.build().getNomeDaConta();
 
-        List<Conta> contas = contaService.findByNumeroDaConta("03");
+        List<Conta> contas = contaService.findByNomeDaConta("03");
 
         Assertions.assertNotEquals(null, contas);
         Assertions.assertTrue(!contas.isEmpty());
-        Assertions.assertEquals(contas.get(0).getNumeroDaConta(), findedNumeroDaConta);
+        Assertions.assertEquals(contas.get(0).getNomeDaConta(), findedNomeDaConta);
     }
 
     @Test
     void findByNumeroDaContaWhenNotFoundTest(){
-        BDDMockito.when(contaRepositoryMock.findByNumeroDaConta(ArgumentMatchers.anyString()))
+        BDDMockito.when(contaRepositoryMock.findByNomeDaConta(ArgumentMatchers.anyString()))
                 .thenReturn(Collections.emptyList());
 
-        List<Conta> contas = contaService.findByNumeroDaConta("01");
+        List<Conta> contas = contaService.findByNomeDaConta("Conta de Cartão de Crédito");
 
         Assertions.assertNotEquals(null, contas);
         Assertions.assertTrue(contas.isEmpty());
@@ -178,11 +178,11 @@ public class ContaServiceTest {
     void saveTest(){
         var saved = contaService.save(Conta.builder()
         		.id(1L)
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build());
         
         var conta = contaService.findById(1);
@@ -195,20 +195,20 @@ public class ContaServiceTest {
     void updateTest(){
         var created = contaService.save(Conta.builder()
         		.id(1L)
-				.numeroDaConta("01")
-				.nomeDaConta("Conta de Luz")
-				.valorDaConta(new BigDecimal(100.0))
-				.dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now())
+        		.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+        		.valorDaContaCorrigido(null)
+        		.dataVencimento(LocalDate.now().plusDays(30))
+        		.dataPagamento(LocalDate.now())
 				.build());
         
         var findedConta = contaService.findById(created.getId());
-        findedConta.setNumeroDaConta("02");
+        findedConta.setNomeDaConta("Conta cartão de crédito");
         
         contaService.update(findedConta);
         
         Assertions.assertEquals(created.getId(), findedConta.getId());
-        Assertions.assertNotEquals(created.getNumeroDaConta(), findedConta.getNumeroDaConta());
+        Assertions.assertNotEquals(created.getNomeDaConta(), findedConta.getNomeDaConta());
     }
 
     @Test

@@ -31,12 +31,12 @@ public class Conta {
 	
 	@NotNull(message = "Campo valor da conta original é obrigatório.")
 	private BigDecimal valorDaContaOriginal;
+
+  @NotEmpty(message = "Campo número da conta é obrigatório.")
+	private String numeroDaConta;
 	
-	@NotNull(message = "Campo data de vencimento é obrigatório.")
-	private LocalDate dataVencimento;
+	@NotEmpty(message = "Campo nome da conta é obrigatório.")
+	private String nomeDaConta;
 	
-	@NotNull(message = "Campo data de pagamento é obrigatório.")
-	private LocalDate dataPagamento;
-	
-	private BigDecimal valorDaContaCorrigido;
-}
+	@NotNull(message = "Campo valor da conta é obrigatório.")
+	private BigDecimal valorDaConta;

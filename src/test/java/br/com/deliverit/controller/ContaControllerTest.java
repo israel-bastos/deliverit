@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -95,19 +95,20 @@ class ContaControllerTest {
         String nomeDaConta = created.getNomeDaConta();
 
         Page<Conta> contaPage = contaController.findAll(null).getBody();
+        
+        Assertions.assertThat(contaPage).isNotNull();
+        Assertions.assertThat(contaPage.toList()).isNotEmpty().hasSize(1);
+        Assertions.assertThat(contaPage.toList().get(0).getNomeDaConta()).isEqualTo(nomeDaConta);
 
-        Assertions.assertNotNull(contaPage);
-        Assertions.assertTrue(!contaPage.isEmpty());
-        Assertions.assertEquals(contaPage.toList().get(0).getNomeDaConta(), nomeDaConta);
     }
     
     @Test
     void findAllFullListOfContasTest(){
-        List<Conta> contas = contaController.findAllNonPageable().getBody();
+    	List<Conta> contas = contaController.findAllNonPageable().getBody();
+        
+        Assertions.assertThat(contas).isNotNull().isNotEmpty().hasSize(1);
+        Assertions.assertThat(contas.get(0).getNomeDaConta()).isNotNull();
 		
-        Assertions.assertNotNull(contas);
-        Assertions.assertTrue(!contas.isEmpty());
-        Assertions.assertEquals(contas.size(), 1);
     }
     
     @Test
@@ -122,9 +123,9 @@ class ContaControllerTest {
 				.build().getId();
 
         Conta conta = contaController.findById(1).getBody();
-
-        Assertions.assertNotNull(conta);
-        Assertions.assertEquals(conta.getId(), findedId);
+        
+        Assertions.assertThat(findedId).isNotNull();
+        Assertions.assertThat(findedId).isEqualTo(conta.getId());
     }
 
     @Test
@@ -138,10 +139,9 @@ class ContaControllerTest {
 				.build().getNomeDaConta();
 
         List<Conta> contas = contaController.findByNomeDaConta("conta").getBody();
-
-        Assertions.assertNotNull(contas);
-        Assertions.assertTrue(!contas.isEmpty());
-        Assertions.assertEquals(contas.get(0).getNomeDaConta(), findedNomeDaConta);
+        
+        Assertions.assertThat(findedNomeDaConta).isNotNull().isNotEmpty();
+        Assertions.assertThat(findedNomeDaConta).isEqualTo(contas.get(0).getNomeDaConta());
     }
 
     @Test
@@ -150,9 +150,8 @@ class ContaControllerTest {
                 .thenReturn(Collections.emptyList());
 
         List<Conta> contas = contaController.findByNomeDaConta("Conta de celular").getBody();
-
-        Assertions.assertNotEquals(null, contas);
-        Assertions.assertTrue(contas.isEmpty());
+        
+        Assertions.assertThat(contas).isNotNull().isEmpty();
     }
 
     @Test
@@ -168,9 +167,8 @@ class ContaControllerTest {
         
         Conta conta = contaController.findById(1).getBody();
         
-        Assertions.assertNotEquals(null, conta);
-        Assertions.assertEquals(conta.getId(), saved.getBody().getId());
-        Assertions.assertEquals(saved.getStatusCode(), HttpStatus.CREATED);
+        Assertions.assertThat(saved.getBody()).isNotNull().isEqualTo(conta);
+        Assertions.assertThat(saved.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
@@ -190,16 +188,16 @@ class ContaControllerTest {
         
         ResponseEntity<Void> updatedConta = contaController.update(findedConta);
         
-        Assertions.assertNotEquals(null, findedConta);
-        Assertions.assertEquals(1, findedConta.getId());
-        Assertions.assertEquals(updatedConta.getStatusCode(), HttpStatus.NO_CONTENT);
+        Assertions.assertThat(created.getBody().getId()).isEqualByComparingTo(findedConta.getId());
+        Assertions.assertThat(updatedConta).isNotNull();
+        Assertions.assertThat(updatedConta.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
     void deleteTest(){
     	ResponseEntity<Void> deletedConta = contaController.delete(1);
-
-        Assertions.assertNotEquals(null, deletedConta);
-        Assertions.assertEquals(deletedConta.getStatusCode(), HttpStatus.NO_CONTENT);
+    	
+    	Assertions.assertThat(deletedConta).isNotNull();
+        Assertions.assertThat(deletedConta.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 }

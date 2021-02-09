@@ -32,24 +32,11 @@ public class Conta {
 	@NotNull(message = "Campo valor da conta original é obrigatório.")
 	private BigDecimal valorDaContaOriginal;
 	
-	@NotNull(message = "Campo valor da conta corrigido é obrigatório.")
-	private BigDecimal valorDaContaCorrigido;
-	
 	@NotNull(message = "Campo data de vencimento é obrigatório.")
 	private LocalDate dataVencimento;
 	
 	@NotNull(message = "Campo data de pagamento é obrigatório.")
 	private LocalDate dataPagamento;
 	
-	@Data
-	@Entity
-	class DadosDeRegra {
-		
-		@Id
-		private long id;
-		
-		private int quantidadeDeDiasEmAtraso;
-		private String regraAplicada;
-		
-	}
+	private BigDecimal valorDaContaCorrigido;
 }

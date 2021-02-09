@@ -47,8 +47,8 @@ public class ContaController {
 	}
 	
 	@GetMapping(path = "/search")
-	public ResponseEntity<List<Conta>> findByNomeDaConta(@RequestParam String nomeDaConta){
-		return ResponseEntity.ok(contaService.findByNomeDaConta(nomeDaConta));
+	public ResponseEntity<List<Conta>> findByNumeroDaConta(@RequestParam String numeroDaConta){
+		return ResponseEntity.ok(contaService.findByNumeroDaConta(numeroDaConta));
 	}
 	
 	@PostMapping

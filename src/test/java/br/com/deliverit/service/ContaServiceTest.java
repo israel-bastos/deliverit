@@ -19,8 +19,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import br.com.deliverit.domain.Conta;
 import br.com.deliverit.handler.exception.NotFoundException;
+import br.com.deliverit.model.Conta;
 import br.com.deliverit.repository.ContaRepository;
 
 @ExtendWith(SpringExtension.class)

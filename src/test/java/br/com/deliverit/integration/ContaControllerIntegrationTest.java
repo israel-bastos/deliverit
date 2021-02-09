@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
-import br.com.deliverit.domain.Conta;
+import br.com.deliverit.model.Conta;
 import br.com.deliverit.repository.ContaRepository;
 import br.com.deliverit.wrapper.PageableResponse;
 
@@ -37,9 +37,12 @@ public class ContaControllerIntegrationTest {
 
 	@Test
 	void findAllWithPageableContasTest() {
-		Conta saved = contaRepository.save(Conta.builder().nomeDaConta("Conta de Luz")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+		Conta saved = contaRepository.save(Conta.builder()
+				.nomeDaConta("Conta de Luz")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+				.dataVencimento(LocalDate.now().plusDays(30))
+				.dataPagamento(LocalDate.now())
+				.build());
 
 		String nomeDaConta = saved.getNomeDaConta();
 
@@ -53,9 +56,12 @@ public class ContaControllerIntegrationTest {
 
 	@Test
 	void findAllFullListOfContasTest() {
-		Conta saved = contaRepository.save(Conta.builder().nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+		Conta saved = contaRepository.save(Conta.builder()
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+				.dataVencimento(LocalDate.now().plusDays(30))
+				.dataPagamento(LocalDate.now())
+				.build());
 
 		List<Conta> contas = testRestTemplate
 				.exchange("/api/v1/contas", HttpMethod.GET, null, new ParameterizedTypeReference<List<Conta>>() {
@@ -67,9 +73,12 @@ public class ContaControllerIntegrationTest {
 
 	@Test
 	void findByIdTest() {
-		Conta saved = contaRepository.save(Conta.builder().numeroDaConta("01").nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+		Conta saved = contaRepository.save(Conta.builder()
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+				.dataVencimento(LocalDate.now().plusDays(30))
+				.dataPagamento(LocalDate.now())
+				.build());
 
 		Long findedId = saved.getId();
 
@@ -81,9 +90,12 @@ public class ContaControllerIntegrationTest {
 
 	@Test
 	void findByNomedDaContaTest() {
-		Conta saved = contaRepository.save(Conta.builder().nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+		Conta saved = contaRepository.save(Conta.builder()
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+				.dataVencimento(LocalDate.now().plusDays(30))
+				.dataPagamento(LocalDate.now())
+				.build());
 
 		String nomeDaConta = saved.getNomeDaConta();
 		String url = String.format("/api/v1/contas/search?nomeDaConta=%s", nomeDaConta);
@@ -107,9 +119,12 @@ public class ContaControllerIntegrationTest {
 
 	@Test
 	void saveTest() {
-		Conta saved = Conta.builder().nomeDaConta("Conta de Internet").valorDaContaOriginal(new BigDecimal(100.0))
-				.valorDaContaCorrigido(new BigDecimal(0.0)).dataVencimento(LocalDate.now().plusDays(30))
-				.dataPagamento(LocalDate.now()).build();
+		Conta saved = Conta.builder()
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+				.dataVencimento(LocalDate.now().plusDays(30))
+				.dataPagamento(LocalDate.now())
+				.build();
 
 		ResponseEntity<Conta> contaResponse = testRestTemplate.postForEntity("/api/v1/contas", saved, Conta.class);
 
@@ -121,9 +136,12 @@ public class ContaControllerIntegrationTest {
 
 	@Test
 	void updateTest() {
-		Conta saved = contaRepository.save(Conta.builder().numeroDaConta("01").nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+		Conta saved = contaRepository.save(Conta.builder()
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+				.dataVencimento(LocalDate.now().plusDays(30))
+				.dataPagamento(LocalDate.now())
+				.build());
 
 		saved.setNomeDaConta("Conta de Celular");
 
@@ -136,9 +154,12 @@ public class ContaControllerIntegrationTest {
 
 	@Test
 	void deleteTest() {
-		Conta saved = contaRepository.save(Conta.builder().numeroDaConta("01").nomeDaConta("Conta de Internet")
-				.valorDaContaOriginal(new BigDecimal(100.0)).valorDaContaCorrigido(new BigDecimal(0.0))
-				.dataVencimento(LocalDate.now().plusDays(30)).dataPagamento(LocalDate.now()).build());
+		Conta saved = contaRepository.save(Conta.builder()
+				.nomeDaConta("Conta de Internet")
+				.valorDaContaOriginal(new BigDecimal(100.0))
+				.dataVencimento(LocalDate.now().plusDays(30))
+				.dataPagamento(LocalDate.now())
+				.build());
 
 		ResponseEntity<Void> contaResponse = testRestTemplate.exchange("/api/v1/contas/{id}", HttpMethod.DELETE, null,
 				Void.class, saved.getId());

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -50,9 +50,8 @@ public class ContaControllerIntegrationTest {
         PageableResponse<Conta> contaPage = testRestTemplate.exchange("/api/v1/contas/pageable", HttpMethod.GET, null,
                 new ParameterizedTypeReference<PageableResponse<Conta>>() {}).getBody();
 
-        Assertions.assertNotNull(contaPage);
-        Assertions.assertTrue(!contaPage.isEmpty());
-        Assertions.assertEquals(contaPage.toList().get(0).getNomeDaConta(), nomeDaConta);
+        Assertions.assertThat(contaPage).isNotNull().isNotEmpty();
+        Assertions.assertThat(contaPage.toList().get(0).getNomeDaConta()).isEqualTo(nomeDaConta);
     }
 
     @Test
@@ -67,11 +66,9 @@ public class ContaControllerIntegrationTest {
     	
         List<Conta> contas = testRestTemplate.exchange("/api/v1/contas", HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Conta>>() {}).getBody();
-
-        Assertions.assertEquals(saved.getNomeDaConta(), contas.get(0).getNomeDaConta());
-        Assertions.assertNotNull(contas);
-        Assertions.assertTrue(!contas.isEmpty());
-        Assertions.assertEquals(contas.size(), 1);
+        
+        Assertions.assertThat(contas).isNotNull().isNotEmpty().hasSize(1);
+        Assertions.assertThat(contas.get(0).getNomeDaConta()).isEqualTo(saved.getNomeDaConta());
     }
 
     @Test
@@ -88,8 +85,8 @@ public class ContaControllerIntegrationTest {
 
         Conta conta = testRestTemplate.getForObject("/api/v1/contas/{id}", Conta.class, findedId);
         
-        Assertions.assertNotNull(conta);
-        Assertions.assertEquals(conta.getId(), findedId);
+        Assertions.assertThat(conta).isNotNull();
+        Assertions.assertThat(conta.getId()).isNotNull().isEqualTo(findedId);
     }
 
     @Test
@@ -108,9 +105,8 @@ public class ContaControllerIntegrationTest {
         List<Conta> contas = testRestTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Conta>>() {}).getBody();
         
-        Assertions.assertNotNull(contas);
-        Assertions.assertTrue(!contas.isEmpty());
-        Assertions.assertEquals(contas.get(0).getNomeDaConta(), nomeDaConta);
+        Assertions.assertThat(contas).isNotNull().isNotEmpty().hasSize(1);
+        Assertions.assertThat(contas.get(0).getNomeDaConta()).isEqualTo(nomeDaConta);
     }
 
     @Test
@@ -118,9 +114,7 @@ public class ContaControllerIntegrationTest {
     	List<Conta> contas = testRestTemplate.exchange("/api/v1/contas/search?nomeDaConta=boleto+da+faculdade", HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Conta>>() {}).getBody();
         
-        Assertions.assertNotNull(contas);
-        Assertions.assertTrue(contas.isEmpty());
-
+    	Assertions.assertThat(contas).isNotNull().isEmpty();
     }
 
     @Test
@@ -134,9 +128,11 @@ public class ContaControllerIntegrationTest {
 				.build();
 
         ResponseEntity<Conta> contaResponse = testRestTemplate.postForEntity("/api/v1/contas", saved, Conta.class);
-
-        Assertions.assertNotNull(contaResponse.getBody().getId());
-        Assertions.assertEquals(contaResponse.getStatusCode(), HttpStatus.CREATED);
+        
+        Assertions.assertThat(contaResponse).isNotNull();
+        Assertions.assertThat(contaResponse.getBody()).isNotNull();
+        Assertions.assertThat(contaResponse.getBody().getId()).isNotNull();
+        Assertions.assertThat(contaResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
@@ -154,8 +150,8 @@ public class ContaControllerIntegrationTest {
         ResponseEntity<Void> contaResponse = testRestTemplate.exchange("/api/v1/contas",
                 HttpMethod.PUT, new HttpEntity<>(saved), Void.class);
         
-        Assertions.assertNotNull(saved);
-        Assertions.assertEquals(contaResponse.getStatusCode(), HttpStatus.NO_CONTENT);
+        Assertions.assertThat(contaResponse).isNotNull();
+        Assertions.assertThat(contaResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
@@ -171,7 +167,7 @@ public class ContaControllerIntegrationTest {
         ResponseEntity<Void> contaResponse = testRestTemplate.exchange("/api/v1/contas/{id}",
                 HttpMethod.DELETE,null, Void.class, saved.getId());
         
-        Assertions.assertNotNull(saved);
-        Assertions.assertEquals(contaResponse.getStatusCode(), HttpStatus.NO_CONTENT);
+        Assertions.assertThat(contaResponse).isNotNull();
+        Assertions.assertThat(contaResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 }
